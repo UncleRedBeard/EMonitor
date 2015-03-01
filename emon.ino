@@ -3,9 +3,9 @@
  * Author:	Uncle RedBeard
  * Date:	28-FEB-2015
  * Desc:	Read temp and humidity from DHT22 sensor and use LED
- *	to alert if temp / humidity is out of range
+ *		to alert if temp / humidity is out of range
  * ToDo:	add LCD and write temp & humidty to display
- *	add logging function
+ *		add logging function
  */
 #include <DHT.h>
 
