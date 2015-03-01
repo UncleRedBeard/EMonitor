@@ -4,6 +4,8 @@
  * Date:	28-FEB-2015
  * Desc:	Read temp and humidity from DHT22 sensor and use LED
  *		to alert if temp / humidity is out of range
+ * Note:	swingLEDs() based on original code by Adam Outler
+ *		http://www.hyundaiaftermarket.org/forum/index.php?/blog/3/entry-26-arduino-emf-meter/
  * ToDo:	add LCD and write temp & humidty to display
  *		add logging function
  */
