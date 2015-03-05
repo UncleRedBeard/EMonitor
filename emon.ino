@@ -1,6 +1,6 @@
 /*
- * File:	emon.ino
- * Author:	Uncle RedBeard
+ * File:  emon.ino
+ * Author:  Uncle RedBeard
  * Date:    02-MARCH-2015
  * Desc:    Read temp and humidity from DHT22 sensor and use LED
  *	to alert if temp / humidity is out of range
