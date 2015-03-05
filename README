@@ -5,7 +5,12 @@ Arduino based environmental temperature and humidity monitor. If either drops
 below their threshold value their LED turns off...and in the case of 
 temperature, if it drops below it's low threshold a red LED turns on.
 
+05-MARCH-2015
+------------
+- completed LCD functions
+
+
 ToDo
 ----
-- add LCD to display temp and rH 
 - add data logging function
+- add sensor and logic for soil / substrate temperature and moisture levels

@@ -1,118 +1,162 @@
 /*
  * File:	emon.ino
  * Author:	Uncle RedBeard
- * Date:	28-FEB-2015
- * Desc:	Read temp and humidity from DHT22 sensor and use LED
- *		to alert if temp / humidity is out of range
- * Note:	swingLEDs() based on original code by Adam Outler
- *		http://www.hyundaiaftermarket.org/forum/index.php?/blog/3/entry-26-arduino-emf-meter/
- * ToDo:	add LCD and write temp & humidty to display
- *		add logging function
+ * Date:    02-MARCH-2015
+ * Desc:    Read temp and humidity from DHT22 sensor and use LED
+ *          to alert if temp / humidity is out of range
+ * ToDo:    add logging function
+ *			add sensor and logic for soil / substrate temperature and moisture levels
+ * Note:    swingLED() based on Adam N Outler's Arduino based EMF Meter code
+ *          http://www.hyundaiaftermarket.org/forum/index.php?/blog/3/entry-26-arduino-emf-meter/
  */
 #include <DHT.h>
+#include <SoftwareSerial.h>
 
 #define DHTPIN 2
 #define DHTTYPE DHT22
 
-// Global Vars
-// DHT22 sensor declaration
+//=== Global Vars ===
+//DHT22 sensor
 DHT dht(DHTPIN, DHTTYPE);
 
-//LED Vars
-int ROW1[] = {4, 5, 6};  // 4 = Green; 5 = Red; 6 = Blue
-int LEDCount = 3;
+//LCD
+const int LCD_PIN = 3;
+SoftwareSerial LCD = SoftwareSerial(255, LCD_PIN);
 
-//Temperature constants
-const float tempLOW = 62.00;
-const float rhLOW = 40.00;
+//LED
+int LED[] = {4, 5, 6, 7};  //4 = green; 5 = red; 6 = blue; 7 = yellow
+int LED_COUNT = 4;
 
-//delay params
-unsigned long interval = 15000;
-unsigned long prevMIllis = 0;
+//Temperature thresholds
+const float TEMP_LOW = 78.00;  //low temp warning
+const float RH_LOW = 85.00;  //low humidity warning
 
-//functions
-void swingLEDs(){
-  for (int Pin = 0; Pin < LEDCount; Pin++) {
-    digitalWrite(ROW1[Pin], HIGH);
+//Delay intervals
+unsigned long READING_INTERVAL = 30000;
+unsigned long LCD_WRITE_WAIT = 5;
+unsigned long PREV_MILLIS = 0;
+
+//=== Functions ===
+void swingLED() {
+  for (int pin = 0; pin < LED_COUNT; pin++) {
+    digitalWrite(LED[pin], HIGH);
     delay(50);
   }
-  for (int Pin = 0; Pin < LEDCount; Pin++) {
-    digitalWrite(ROW1[Pin], LOW);
+  for (int pin = 0; pin < LED_COUNT; pin++) {
+    digitalWrite(LED[pin], LOW);
     delay(50);
   }
-  for (int Pin = LEDCount; Pin > -1 ; Pin--) {
-    digitalWrite(ROW1[Pin], HIGH);
+  for (int pin = LED_COUNT; pin > -1; pin--) {
+    digitalWrite(LED[pin], HIGH);
     delay(50);
   }
-  for (int Pin = LEDCount; Pin > -1; Pin--) {
-    digitalWrite(ROW1[Pin], LOW);
-    delay(50);
+  for (int pin = LED_COUNT; pin > -1; pin--) {
+    digitalWrite(LED[pin], LOW);
+    delay(25);
   }
 }
 
-void tempRH(){
-  float humidity = dht.readHumidity();
+void get_temp_rh(){
+  float rh = dht.readHumidity();
   float tempF = dht.readTemperature(true);
   
-  if (isnan(humidity) || isnan(tempF)) {
-    Serial.println("\nFailed to read DHT22 sensor.");
-  } else {
-    Serial.print("Temp: ");
-    Serial.print(tempF);
-    Serial.println("*F");
-    Serial.print("Humidity: ");
-    Serial.print(humidity);
-    Serial.println("%\n");
+  if(isnan(rh)||isnan(tempF)){
+    LCD.write(12);
+    if(((unsigned long)(millis() - PREV_MILLIS) >= LCD_WRITE_WAIT)){
+      PREV_MILLIS = millis();
+      LCD.print("Failed to read");
+      LCD.write(13);
+      LCD.print("DHT22 sensor");
+    } else {
+      LCD.write(12);
+      if(((unsigned long)(millis() - PREV_MILLIS) >= LCD_WRITE_WAIT)){
+        PREV_MILLIS = millis();
+        //write to LCD
+        LCD.print("Temp:    ");
+        LCD.print(tempF);
+        LCD.print("%");
+        LCD.write(13);
+        LCD.print("RH:      ");
+        LCD.print(rh);
+        LCD.print("%");        
+      }
+    }
+    //turn on|off LEDs
+    if (tempF > TEMP_LOW) {        //turn on|off temperarute leds
+      digitalWrite(LED[0], HIGH);  //turn on green led
+      digitalWrite(LED[1], LOW);   //turn off red led
+    } else {
+      digitalWrite(LED[0], LOW);   //turn off green led
+      digitalWrite(LED[1], HIGH);  //turn on red led
+    }
+    if (rh > RH_LOW) {
+      digitalWrite(LED[2], HIGH);  //turn on blue led
+      digitalWrite(LED[3], LOW);   //turn off yellow led
+    } else {
+      digitalWrite(LED[2], LOW);   //turn off blue led
+      digitalWrite(LED[3], HIGH);  //turn on yellow led
+    }
   }
-  
-  if (tempF > tempLOW) {
-    digitalWrite(ROW1[0], HIGH);
-    digitalWrite(ROW1[1], LOW);
-  } else if (tempF < tempLOW) {
-    digitalWrite(ROW1[1], HIGH);
-    digitalWrite(ROW1[0], LOW);
-  }
-  
-  if (humidity > rhLOW) {
-    digitalWrite(ROW1[2], HIGH);
-  } else {
-    digitalWrite(ROW1[2], LOW);
-  }
-    
 }
 
-
-//===================
-void setup(){
-  Serial.begin(9600);
+//==============
+void setup() {
   
-  Serial.println("\nSystem Starting");
-  Serial.println("Please wait.\n");
+  //-+-+-+-Initialize LCD-+-+-+-
+  LCD.begin(9600);
+  LCD.write(17);
+  LCD.write(12);
+  LCD.write(22);
+  delay(5);
+  LCD.print("Hello there");
+  LCD.write(13);
+  LCD.print("Uncle Red");
+  delay(3000);
+  LCD.write(12);
+  delay(5);
+  LCD.print("System Starting");
+  LCD.write(13);
+  LCD.print("Please Wait");
+  delay(5000);
   
-  Serial.println("Initializing LEDs");
+  //-+-+-+-Initialize LEDs-+-+-+-
+  LCD.write(12);
+  delay(5);
+  LCD.print("Init LEDs");
+  delay(500);
   
-  for (int Pin = 0; Pin < LEDCount; Pin++) {
-    pinMode(ROW1[Pin], OUTPUT);
-    digitalWrite(ROW1[Pin], HIGH);
+  for (int pin = 0; pin < LED_COUNT; pin ++) {
+    pinMode(LED[pin], OUTPUT);
+    digitalWrite(LED[pin], HIGH);
     delay(50);
-    digitalWrite(ROW1[Pin], LOW);
-    delay(50);
+    digitalWrite(LED[pin], LOW);
   }
   
-  delay(2000);
-  swingLEDs();
-  swingLEDs();
+  delay(500);
+  LCD.write(12);
+  delay(1000);
+  LCD.print("oooOOO pretty");
+  swingLED();
+  swingLED();
+  delay(250);
   
-  Serial.println("\nInitializing DHT22 sensor...\n");
+  //-+-+-+-Initialize DHT22-+-+-+-
+  LCD.write(12);
+  delay(500);
+  LCD.print("Initializing");
+  LCD.write(13);
+  LCD.print("DHT22 sensor");
+  delay(250);
+  swingLED();
   dht.begin();
+  delay(750);
+  
+  LCD.write(12);
+  delay(5);
+  LCD.print("System Ready");
+  
 }
 
-//+=+=+=+=+=+=+=+=+=+=+=+
 void loop(){
-  if(((unsigned long)(millis() - prevMIllis)) >= interval){
-    prevMIllis = millis();
-    
-    tempRH();
-  }
-  
+  get_temp_rh;
 }
