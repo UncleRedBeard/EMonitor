@@ -3,9 +3,9 @@
  * Author:  Uncle RedBeard
  * Date:    02-MARCH-2015
  * Desc:    Read temp and humidity from DHT22 sensor and use LED
- *		to alert if temp / humidity is out of range
+ *		    to alert if temp / humidity is out of range
  * ToDo:    add logging function
- *		add sensor and logic for soil / substrate temperature and moisture levels
+ *		    add sensor and logic for soil / substrate temperature and moisture levels
  * Note:    swingLED() based on Adam N Outler's Arduino based EMF Meter code
  *          http://www.hyundaiaftermarket.org/forum/index.php?/blog/3/entry-26-arduino-emf-meter/
  */
