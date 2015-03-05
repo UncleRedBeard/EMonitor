@@ -2,9 +2,9 @@ README
 ======
 
 Arduino based environmental temperature and humidity monitor. Monitors ambient
-temperature and relative humidity. My plans are to use this as greenhouse
-monitoring system and on smaller scale to monitor conditions in a seed
-starting / cloning domed tray.
+temperature and relative humidity. My plans are to use this as part of a 
+greenhouse monitoring system and on smaller scale to monitor conditions in a
+seed starting / cloning domed tray.
 
 
 05-MARCH-2015
