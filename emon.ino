@@ -158,5 +158,8 @@ void setup() {
 }
 
 void loop(){
-  get_temp_rh;
+  if(((unsigned long)(millis() - PREV_MILLIS) >= READING_INTERVAL)) {
+    PREV_MILLIS = millis();
+    get_temp_rh;
+  }
 }
