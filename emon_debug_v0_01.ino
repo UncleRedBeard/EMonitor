@@ -7,6 +7,12 @@
  * ToDo:     add logging function
  *               add LCD and write temp & humidty to display
  *               add millis() based delay logic for system init and each function
+ * Debug:  09-MARCH-2015
+ *              - removed all lcd calls
+ *              - replaced with Serial.print()'s
+ *              - this appears to have resolved the issue with printing temp and rh
+ *              - need to add LCD.xxx calls and make sure they work properly
+ *                LCD.write(12);
  */
 #include <DHT.h>
 #include <SoftwareSerial.h>
@@ -54,6 +60,7 @@ void get_temp_rh() {
   float rh = dht.readHumidity();
   float tempF = dht.readTemperature(true);
   
+  //Serial port debugging
   if (isnan(rh)||isnan(tempF)) {
     Serial.print("\nUnable to read DHT22 sensor\n");
   } else {
@@ -64,6 +71,7 @@ void get_temp_rh() {
     Serial.print(rh);
     Serial.print("%\n");
   }
+  
   //LEDs
   if (tempF > LOW_TEMP) {
     digitalWrite(LED[0], HIGH);
