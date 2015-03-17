@@ -1,18 +1,15 @@
 README
 ======
 
-Arduino based environmental temperature and humidity monitor. Monitors ambient
-temperature and relative humidity. My plans are to use this as part of a 
-greenhouse monitoring system and on smaller scale to monitor conditions in a
-seed starting / cloning domed tray.
+Main program quit writing to LCD properly.
 
+Updates
+=======
+	09-MARCH-2015
+		- removed all lcd references / use
+		- switched to serial prints
+		- tests were successful
 
-05-MARCH-2015
-------------
-- completed LCD functions
-
-
-ToDo
-----
-- add data logging function
-- add sensor and logic for soil / substrate temperature and moisture levels
+	11-MARCH-2015
+		- added lcd calls to setup() and to get_temp_rh()
+		- no testing completed yet

@@ -13,6 +13,8 @@
  *              - this appears to have resolved the issue with printing temp and rh
  *              - need to add LCD.xxx calls and make sure they work properly
  *                LCD.write(12);
+ *         11-MARCH-2015
+ *              - added LCD updates to setup() and get_temp_rh(); code change only, currently unable to test with hardware
  */
 #include <DHT.h>
 #include <SoftwareSerial.h>
