@@ -15,6 +15,10 @@
  *                LCD.write(12);
  *         11-MARCH-2015
  *              - added LCD updates to setup() and get_temp_rh(); code change only, currently unable to test with hardware
+ *         20-MARCH-2015
+ *              - testing with previous updates did not work properly
+ *              - removed LCD from get_tmp_rh() and that appears to have resolved one issue
+ *              - need to add LCD back into get_temp_rh()
  */
 #include <DHT.h>
 #include <SoftwareSerial.h>
@@ -34,8 +38,8 @@ int LED[] = {4, 5, 6, 7};  //4 = green; 5 = red; 6 = blue; 7 = yellow
 int LED_COUNT = 4;
 
 //Temperature thresholds
-const float LOW_TEMP = 78.00;  //low temp warning
-const float LOW_RH = 85.00;  //low humidity warning
+const float LOW_TEMP = 85.00;  //low temp warning
+const float LOW_RH = 95.00;  //low humidity warning
 
 //Delay Intervals
 unsigned long READING_INTERVAL = 30000;
@@ -78,30 +82,6 @@ void get_temp_rh() {
     Serial.print("%\n");
   }
   
-  //LCD
-  if (isnan(rh) || isnan(tempF)) {
-    LCD.write(12);
-    if(((unsigned long)(millis() - PREV_MILLIS) >= LCD_WRITE_WAIT)) {
-      PREV_MILLIS = millis();
-      LCD.print("Failed to read");
-      LCD.write(13);
-      LCD.print("DHT22 sensor");
-    } else {
-      LCD.write(12);
-      if(((unsigned long)(millis() - PREV_MILLIS) >= LCD_WRITE_WAIT)) {
-        PREV_MILLIS = millis();
-        LCD.print("Temp:     ");
-        LCD.print(tempF);
-        LCD.print("F");
-        LCD.write(13);
-        LCD.print("RH:       ");
-        LCD.print(rh);
-        LCD.print("%");
-      }
-    }
-    
-  }
-  
   //LEDs
   if (tempF > LOW_TEMP) {
     digitalWrite(LED[0], HIGH);
@@ -126,21 +106,27 @@ void setup() {
   /**** Initialize LCD ****/
   LCD.begin(9600);
   LCD.write(17);
-  LCD.write(12);
   LCD.write(22);
+  LCD.write(12);
   delay(5);
-  LCD.print("      Hello      ");
+  LCD.print("     Hello");
   LCD.write(13);
-  LCD.print("    Uncle Red    ");
+  LCD.print("   Uncle Red");
   delay(3000);
   LCD.write(12);
   delay(5);
   LCD.print("System Starting");
+  LCD.write(13);
   LCD.print("Please Wait");
 
   /***** Initialize LEDs *****/
   Serial.print("Initializing LEDs\n");
   delay(500);
+  
+  //LCD
+  LCD.write(12);
+  delay(5);
+  LCD.print("Inii LEDs");
   
   for (int pin = 0; pin < LED_COUNT; pin++) {
     pinMode(LED[pin], OUTPUT);
@@ -151,6 +137,9 @@ void setup() {
   
   delay(500);
   Serial.print("oooOOOO pretty\n");
+  LCD.write(12);
+  delay(5);
+  LCD.print("oooOOO pretty");
   delay(1000);
   swingLED();
   swingLED();
@@ -159,13 +148,19 @@ void setup() {
   /**** Initialize DHT22 *****/
   delay(500);
   Serial.print("Initializing DHT22 sensor\n");
+  LCD.write(12);
+  delay(5);
+  LCD.print("init DHT22");
   delay(250);
   swingLED();
   dht.begin();
   delay(750);
   
-  Serial.print("System Ready\n");
-  
+  Serial.print("System Running\n");
+  LCD.write(12);
+  delay(5);
+  LCD.print("System Running");
+
 }
 
 void loop() {

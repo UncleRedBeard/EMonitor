@@ -13,3 +13,9 @@ Updates
 	11-MARCH-2015
 		- added lcd calls to setup() and to get_temp_rh()
 		- no testing completed yet
+	
+	20-MARCH-2015
+		- tests with previous updates failed
+		- removed lcd calls from get_temp_rh() 
+		- lcd in setup() works prperly
+		- need to add lcd calls in get_temp_rh()
