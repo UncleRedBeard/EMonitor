@@ -73,21 +73,8 @@ void swingLED() {
 void get_temp_rh() {
   float rh = dht.readHumidity();
   float tempF = dht.readTemperature(true);
-
-  //Serial port debugging
-  if (isnan(rh)||isnan(tempF)) {
-    Serial.print("\nUnable to read DHT22 sensor\n");
-  } 
-  else {
-    Serial.print("\nTemperature:   ");
-    Serial.print(tempF);
-    Serial.print("F\n");
-    Serial.print("Humidity:         ");
-    Serial.print(rh);
-    Serial.print("%\n");
-  }
-
-  //LCD without delay()
+  
+  //LCD
   if(isnan(rh)||isnan(tempF)) {
     LCD.write(12);
     if(((unsigned long)(millis() - PREV_MILLIS) >= LCD_WRITE_WAIT)) {
@@ -121,41 +108,34 @@ void get_temp_rh() {
   if (rh > LOW_RH) {
     digitalWrite(LED[2], HIGH);
     digitalWrite(LED[3], LOW);
-  } 
-  else {
+  } else {
     digitalWrite(LED[2], LOW);
     digitalWrite(LED[3], HIGH);
   }
 }
 //================
 void setup() {
-  /**** Initialize Serial Port ****/
-  Serial.begin(9600);
-
+  
   /**** Initialize LCD ****/
   LCD.begin(9600);
   LCD.write(17);
   LCD.write(22);
   LCD.write(12);
-  delay(5);
+  delay(LCD_WRITE_WAIT);
   LCD.print("     Hello");
   LCD.write(13);
   LCD.print("   Uncle Red");
   delay(3000);
   LCD.write(12);
-  delay(5);
+  delay(LCD_WRITE_WAIT);
   LCD.print("System Starting");
   LCD.write(13);
   LCD.print("Please Wait");
-  delay(1000);
-
-  /***** Initialize LEDs *****/
-  Serial.print("Initializing LEDs\n");
-  delay(1000);
+  delay(2000);
 
   //LCD
   LCD.write(12);
-  delay(5);
+  delay(LCD_WRITE_WAIT);
   LCD.print("Initializing");
   LCD.write(13);
   LCD.print("LEDs");
@@ -168,9 +148,8 @@ void setup() {
   }
 
   delay(1000);
-  Serial.print("oooOOOO pretty\n");
   LCD.write(12);
-  delay(5);
+  delay(LCD_WRITE_WAIT);
   LCD.print("oooOOO pretty");
   delay(1000);
   swingLED();
@@ -178,10 +157,8 @@ void setup() {
   delay(250);
 
   /**** Initialize DHT22 *****/
-  delay(500);
-  Serial.print("Initializing DHT22 sensor\n");
   LCD.write(12);
-  delay(5);
+  delay(LCD_WRITE_WAIT);
   LCD.print("Initializing");
   LCD.write(13);
   LCD.print("DHT22 sensor");
@@ -190,10 +167,10 @@ void setup() {
   dht.begin();
   delay(750);
 
-  Serial.print("System Running\n");
   LCD.write(12);
   delay(5);
   LCD.print("System Running");
+  
 }
 
 void loop() {
