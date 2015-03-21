@@ -19,3 +19,8 @@ Updates
 		- removed lcd calls from get_temp_rh() 
 		- lcd in setup() works prperly
 		- need to add lcd calls in get_temp_rh()
+
+	21-MARCH-2015
+		- resloved
+		- ROOT CAUSE: had to clean up use of millis() instead of delay() for pauses
+		- need to clean up all references to serial calls before merging into master
