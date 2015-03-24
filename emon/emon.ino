@@ -65,9 +65,9 @@ void get_temp_rh() {
     LCD.write(12);
     if(((unsigned long)(millis() - PREV_MILLIS) >= LCD_WRITE_WAIT)) {
       PREV_MILLIS = millis();
-      LCD.print("ERROR:  Unable to");
+      LCD.print("ERR: Unable to");
       LCD.write(13);
-      LCD.print("read DHT22");
+      LCD.print("to read DHT22");
     }
   } else {
     LCD.write(12);
